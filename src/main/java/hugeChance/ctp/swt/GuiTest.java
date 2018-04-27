@@ -1,19 +1,21 @@
 package hugeChance.ctp.swt;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import swing2swt.layout.BorderLayout;
-import org.eclipse.swt.widgets.Composite;
-
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Label;
 import org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_TE_RESUME_TYPE;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInputOrderActionField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInputOrderField;
@@ -34,13 +36,8 @@ import org.hraink.futures.jctp.trader.JCTPTraderSpi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import hugeChance.ctp.api.MyTraderSpi;
 import hugeChance.ctp.api.MyTraderSpiTest;
-
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import swing2swt.layout.BorderLayout;
 
 public class GuiTest {
     
@@ -65,6 +62,8 @@ public class GuiTest {
     public GuiTest(String url, String brokenId, String investorNo, String passwd){
         this.url = url;
         this.brokenId = brokenId;
+        this.investorNo = investorNo;
+        this.passwd = passwd;
     }
     
     public GuiTest(){
@@ -77,7 +76,7 @@ public class GuiTest {
      */
     public static void main(String[] args) {
         try {
-            GuiTest window = new GuiTest();
+            GuiTest window = new GuiTest("tcp://180.168.146.187:10000","9999","105839","caojiactp1");
             window.open();
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,13 +165,21 @@ public class GuiTest {
             public void widgetSelected(SelectionEvent e) {
                 
                 //下单
-                reqOrderInsert();
+                try {
+                    reqOrderInsert();
+                } catch (Exception e1) {
+                    MessageBox box = new MessageBox(shell, SWT.APPLICATION_MODAL | SWT.YES);
+                    box.setMessage("不要乱输");
+                    box.setText("错误");
+                    box.open();
+                    return;
+                }
             }
         });
         btnNewButton.setBounds(330, 0, 104, 64);
         btnNewButton.setText("下单");
         
-        console = new Text(shell, SWT.BORDER);
+        console = new Text(shell, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
         console.setLayoutData(BorderLayout.CENTER);
 
     }
@@ -182,7 +189,7 @@ public class GuiTest {
         @Override
         public void run() {
             
-            String dataPath = "ctpdata/test/";
+            String dataPath = "ctpdata/guitest/";
             
             traderApi = JCTPTraderApi.createFtdcTraderApi();
             traderApi = JCTPTraderApi.createFtdcTraderApi(dataPath);
@@ -453,7 +460,7 @@ public class GuiTest {
                 
                 @Override
                 public void run() {
-                    console.append("响应：报单 "+JSON.toJSONString(pInputOrder)+"\r\n");
+                    console.append(LocalDateTime.now()+"收到报单错误响应 "+JSON.toJSONString(pRspInfo)+"\r\n");
                 }
             });
             
@@ -564,7 +571,7 @@ public class GuiTest {
                 
                 @Override
                 public void run() {
-                    console.append("onRspSettlementInfoConfirm响应： "+JSON.toJSONString(pSettlementInfoConfirm)+"\r\n");
+                    console.append("收到结算清单 确认响应\r\n");
                 }
             });
         } catch (Exception e) {
@@ -609,7 +616,7 @@ public class GuiTest {
                 
                 @Override
                 public void run() {
-                    console.append("onErrRtnOrderInsert响应： "+JSON.toJSONString(pInputOrder)+"\r\n");
+                    console.append(LocalDateTime.now()+"收到报单录入错误响应： "+JSON.toJSONString(pRspInfo)+"\r\n");
                 }
             });
         } catch (Exception e) {

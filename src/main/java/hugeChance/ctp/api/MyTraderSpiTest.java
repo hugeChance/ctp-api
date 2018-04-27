@@ -86,7 +86,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	    
 	    logger.debug("登录请求响应："+JSON.toJSONString(pRspUserLogin));
 	    
-	    guiTest.onRspUserLogin(pRspUserLogin, pRspInfo, nRequestID, bIsLast);
+	    //guiTest.onRspUserLogin(pRspUserLogin, pRspInfo, nRequestID, bIsLast);
 	    
 //		System.out.println("TradingDay:" + traderApi.getTradingDay());
 //		System.out.println(pRspInfo.getErrorID());
@@ -205,7 +205,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 			CThostFtdcSettlementInfoConfirmField pSettlementInfoConfirm,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 //		System.out.println("结算单确认回调");
-	    guiTest.onRspSettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast);
+	    //guiTest.onRspSettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast);
 	}
 	
 	@Override

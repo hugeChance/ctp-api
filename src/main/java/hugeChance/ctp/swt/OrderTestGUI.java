@@ -17,6 +17,7 @@ public class OrderTestGUI {
     private Text investorText;
     private Text passwdText;
     private Text text;
+    private Combo combo;
 
     /**
      * Launch the application.
@@ -62,7 +63,7 @@ public class OrderTestGUI {
         exchange.setText("前置机地址");
         //tcp://180.168.146.187:10000
         
-        Combo combo = new Combo(shlctp, SWT.NONE);
+        combo = new Combo(shlctp, SWT.NONE);
         combo.add("tcp://180.168.146.187:10000",0);
         combo.setBounds(189, 45, 110, 23);
         
@@ -98,7 +99,7 @@ public class OrderTestGUI {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 
-                GuiTest guiTest = new GuiTest();
+                GuiTest guiTest = new GuiTest(combo.getText(),text.getText(),investorText.getText(),passwdText.getText());
                 
                 shlctp.dispose();
                 guiTest.open();
