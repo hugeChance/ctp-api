@@ -1,6 +1,7 @@
 package com.guotaian;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import com.gta.qts.c2j.adaptee.IGTAQTSCallbackBase;
 import com.gta.qts.c2j.adaptee.structure.CFFEXL2_Quotation;
@@ -194,7 +195,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
     public void OnSubscribe_SHFEL1_Quotation(SHFEL1_Quotation data) {
         if(guotaian != null){
             try {
-                guotaian.textArea.append(new String(data.Symbol,"UTF-8").replace(" ", "") + " " +data.LastPrice + "\n\r");
+                guotaian.textArea.append(data.Time + new String(data.Symbol,"UTF-8").replace(" ", "") + " " +data.LastPrice + "\n\r");
                 guotaian.textArea.setCaretPosition(guotaian.textArea.getText().length()); 
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
@@ -209,7 +210,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
 	public void OnSubscribe_CZCEL1_Quotation(CZCEL1_Quotation arg0) {
 	    if(guotaian != null){
             try {
-                guotaian.textArea_1.append(new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
+                guotaian.textArea_1.append(arg0.Time + new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
                 guotaian.textArea_1.setCaretPosition(guotaian.textArea_1.getText().length()); 
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
@@ -238,7 +239,8 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
 		
 	    if(guotaian != null){
             try {
-                guotaian.textArea_2.append(new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
+                
+                guotaian.textArea_2.append(arg0.Time + new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
                 guotaian.textArea_2.setCaretPosition(guotaian.textArea_2.getText().length()); 
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
@@ -277,7 +279,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
 	public void OnSubscribe_DCEL2_Quotation(DCEL2_Quotation arg0) {
 	    if(guotaian != null){
             try {
-                guotaian.textArea_3.append(new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
+                guotaian.textArea_3.append(arg0.Time + new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
                 guotaian.textArea_3.setCaretPosition(guotaian.textArea_3.getText().length()); 
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
