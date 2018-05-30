@@ -1,7 +1,10 @@
 package com.guotaian;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.gta.qts.c2j.adaptee.IGTAQTSCallbackBase;
 import com.gta.qts.c2j.adaptee.structure.CFFEXL2_Quotation;
@@ -45,6 +48,7 @@ import com.gta.qts.c2j.adaptee.structure.SZSEL2_Quotation;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Static;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Status;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Transaction;
+import com.sun.xml.internal.ws.api.server.SDDocumentFilter;
 
 /**
  * 订阅消息数据回调接口
@@ -195,9 +199,18 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
     public void OnSubscribe_SHFEL1_Quotation(SHFEL1_Quotation data) {
         if(guotaian != null){
             try {
-                guotaian.textArea.append(data.Time + new String(data.Symbol,"UTF-8").replace(" ", "") + " " +data.LastPrice + "\n\r");
+                
+                SimpleDateFormat format = new SimpleDateFormat("HHmmssSSS");
+                String time = StringUtils.leftPad(data.Time+"", 9 ,'0');
+                Date d = format.parse(time);
+                format = new SimpleDateFormat("HH:mm:ss.SSS");
+                String t = StringUtils.rightPad(format.format(d),20);
+                
+                String instrument = new String(data.Symbol,"UTF-8").substring(0, 10);
+                
+                guotaian.textArea.append(t +instrument +data.LastPrice + "\n\r");
                 guotaian.textArea.setCaretPosition(guotaian.textArea.getText().length()); 
-            } catch (UnsupportedEncodingException e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -210,9 +223,18 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
 	public void OnSubscribe_CZCEL1_Quotation(CZCEL1_Quotation arg0) {
 	    if(guotaian != null){
             try {
-                guotaian.textArea_1.append(arg0.Time + new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
+                
+                SimpleDateFormat format = new SimpleDateFormat("HHmmssSSS");
+                String time = StringUtils.leftPad(arg0.Time+"", 9 ,'0');
+                Date d = format.parse(time);
+                format = new SimpleDateFormat("HH:mm:ss.SSS");
+                String t = StringUtils.rightPad(format.format(d),20);
+                
+                String instrument = new String(arg0.Symbol,"UTF-8").substring(0, 10);
+                
+                guotaian.textArea_1.append(t + instrument +arg0.LastPrice + "\n\r");
                 guotaian.textArea_1.setCaretPosition(guotaian.textArea_1.getText().length()); 
-            } catch (UnsupportedEncodingException e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -239,10 +261,17 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
 		
 	    if(guotaian != null){
             try {
+                SimpleDateFormat format = new SimpleDateFormat("HHmmssSSS");
+                String time = StringUtils.leftPad(arg0.Time+"", 9 ,'0');
+                Date d = format.parse(time);
+                format = new SimpleDateFormat("HH:mm:ss.SSS");
+                String t = StringUtils.rightPad(format.format(d),20);
                 
-                guotaian.textArea_2.append(arg0.Time + new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
+                String instrument = new String(arg0.Symbol,"UTF-8").substring(0, 10);
+                
+                guotaian.textArea_2.append(t + instrument + arg0.LastPrice + "\n\r");
                 guotaian.textArea_2.setCaretPosition(guotaian.textArea_2.getText().length()); 
-            } catch (UnsupportedEncodingException e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -279,9 +308,18 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
 	public void OnSubscribe_DCEL2_Quotation(DCEL2_Quotation arg0) {
 	    if(guotaian != null){
             try {
-                guotaian.textArea_3.append(arg0.Time + new String(arg0.Symbol,"UTF-8").replace(" ", "") + " " +arg0.LastPrice + "\n\r");
+                
+                SimpleDateFormat format = new SimpleDateFormat("HHmmssSSS");
+                String time = StringUtils.leftPad(arg0.Time+"", 9 ,'0');
+                Date d = format.parse(time);
+                format = new SimpleDateFormat("HH:mm:ss.SSS");
+                String t = StringUtils.rightPad(format.format(d),20);
+                
+                String instrument = new String(arg0.Symbol,"UTF-8").substring(0, 10);
+                
+                guotaian.textArea_3.append(t + instrument +arg0.LastPrice + "\n\r");
                 guotaian.textArea_3.setCaretPosition(guotaian.textArea_3.getText().length()); 
-            } catch (UnsupportedEncodingException e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }

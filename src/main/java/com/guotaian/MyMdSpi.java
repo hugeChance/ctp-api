@@ -1,5 +1,6 @@
 package com.guotaian;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcDepthMarketDataField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcReqUserLoginField;
@@ -64,8 +65,12 @@ public class MyMdSpi extends JCTPMdSpi {
 	@Override
 	public void onRtnDepthMarketData(CThostFtdcDepthMarketDataField pDepthMarketData) {
 		if(gui != null){
-			gui.textArea_4.append(pDepthMarketData.getUpdateTime()+":"+pDepthMarketData.getUpdateMillisec()+" "+pDepthMarketData.getInstrumentID()
-			+" " + pDepthMarketData.getLastPrice() +"\r\n");
+		    
+		    String time = StringUtils.rightPad(pDepthMarketData.getUpdateTime()+"."+pDepthMarketData.getUpdateMillisec(), 12,'0');
+		    time = StringUtils.rightPad(time, 20);
+		    
+		    String instrument = StringUtils.rightPad(pDepthMarketData.getInstrumentID(),10);
+			gui.textArea_4.append(time+instrument + pDepthMarketData.getLastPrice() +"\r\n");
 			gui.textArea_4.setCaretPosition(gui.textArea_4.getText().length()); 
 		}
 	}
