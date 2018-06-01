@@ -1,10 +1,10 @@
 package com.guotaian;
 
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.gta.qts.c2j.adaptee.IGTAQTSCallbackBase;
 import com.gta.qts.c2j.adaptee.structure.CFFEXL2_Quotation;
@@ -48,12 +48,14 @@ import com.gta.qts.c2j.adaptee.structure.SZSEL2_Quotation;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Static;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Status;
 import com.gta.qts.c2j.adaptee.structure.SZSEL2_Transaction;
-import com.sun.xml.internal.ws.api.server.SDDocumentFilter;
 
 /**
  * 订阅消息数据回调接口
  * */
 public class GTACallbackBase implements IGTAQTSCallbackBase {
+    
+    
+    static Logger logger = Logger.getLogger(GTACallbackBase.class);
     
     private GuotaianGUI guotaian;
     
@@ -209,6 +211,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
                 String instrument = new String(data.Symbol,"UTF-8").substring(0, 10);
                 
                 guotaian.textArea.append(t +instrument +data.LastPrice + "\n\r");
+                logger.info("国泰安上期L1  "+t +instrument +data.LastPrice);
                 guotaian.textArea.setCaretPosition(guotaian.textArea.getText().length()); 
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -233,6 +236,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
                 String instrument = new String(arg0.Symbol,"UTF-8").substring(0, 10);
                 
                 guotaian.textArea_1.append(t + instrument +arg0.LastPrice + "\n\r");
+                logger.info("国泰安郑商L1  "+t +instrument +arg0.LastPrice);
                 guotaian.textArea_1.setCaretPosition(guotaian.textArea_1.getText().length()); 
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -270,6 +274,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
                 String instrument = new String(arg0.Symbol,"UTF-8").substring(0, 10);
                 
                 guotaian.textArea_2.append(t + instrument + arg0.LastPrice + "\n\r");
+                logger.info("国泰安大商L1  "+t +instrument +arg0.LastPrice);
                 guotaian.textArea_2.setCaretPosition(guotaian.textArea_2.getText().length()); 
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -318,6 +323,7 @@ public class GTACallbackBase implements IGTAQTSCallbackBase {
                 String instrument = new String(arg0.Symbol,"UTF-8").substring(0, 10);
                 
                 guotaian.textArea_3.append(t + instrument +arg0.LastPrice + "\n\r");
+                logger.info("国泰安大商L2  "+t +instrument +arg0.LastPrice);
                 guotaian.textArea_3.setCaretPosition(guotaian.textArea_3.getText().length()); 
             } catch (Exception e) {
                 // TODO Auto-generated catch block
