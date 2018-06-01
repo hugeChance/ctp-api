@@ -71,6 +71,7 @@ public class MyMdSpi extends JCTPMdSpi {
 		    
 		    String instrument = StringUtils.rightPad(pDepthMarketData.getInstrumentID(),10);
 			gui.textArea_4.append(time+instrument + pDepthMarketData.getLastPrice() +"\r\n");
+			logger.info("CTP大商    "+time+instrument + pDepthMarketData.getLastPrice());
 			gui.textArea_4.setCaretPosition(gui.textArea_4.getText().length()); 
 		}
 	}
