@@ -8,7 +8,12 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+
+import org.hraink.futures.jctp.md.JCTPMdApi;
+import org.hraink.futures.jctp.md.JCTPMdSpi;
 
 import com.gta.qts.c2j.adaptee.IGTAQTSApi;
 import com.gta.qts.c2j.adaptee.IGTAQTSCallbackBase;
@@ -17,8 +22,6 @@ import com.gta.qts.c2j.adaptee.structure.QTSDataType;
 import com.gta.qts.c2j.adaptee.structure.QTSDataType.MsgType;
 import com.gta.qts.c2j.adaptee.structure.QTSDataType.RetCode;
 import com.gta.qts.c2j.adaptee.structure.StockSymbol;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 
 public class GuotaianGUI {
 
@@ -31,10 +34,12 @@ public class GuotaianGUI {
     public JTextArea textArea_2;
     
     public JTextArea textArea_3;
+    public JTextArea textArea_4;
     private JScrollPane scrollPane;
     private JScrollPane scrollPane_1;
     private JScrollPane scrollPane_2;
     private JScrollPane scrollPane_3;
+    private JScrollPane scrollPane_4;
 
     /**
      * Launch the application.
@@ -47,7 +52,14 @@ public class GuotaianGUI {
                     Thread marketThread = new Thread(new MarketThread(window));
                     marketThread.setDaemon(true);
                     marketThread.start();
+                    
+                    Thread ctp = new Thread(new Ctp(window));
+                    ctp.setDaemon(true);
+                    ctp.start();
+                    
                     window.frame.setVisible(true);
+                    
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -67,7 +79,7 @@ public class GuotaianGUI {
      */
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 755, 520);
+        frame.setBounds(100, 100, 755, 758);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
         
@@ -86,6 +98,10 @@ public class GuotaianGUI {
         JLabel label_3 = new JLabel("大商所L2");
         label_3.setBounds(398, 241, 54, 15);
         frame.getContentPane().add(label_3);
+        
+        JLabel lblCtp = new JLabel("CTP大商");
+        lblCtp.setBounds(10, 482, 54, 15);
+        frame.getContentPane().add(lblCtp);
         
         scrollPane = new JScrollPane();
         scrollPane.setBounds(10, 29, 331, 202);
@@ -124,6 +140,44 @@ public class GuotaianGUI {
         
         textArea_3 = new JTextArea();
         scrollPane_3.setViewportView(textArea_3);
+        
+        scrollPane_4 = new JScrollPane();
+        scrollPane_4.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane_4.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane_4.setBounds(10, 507, 331, 205);
+        frame.getContentPane().add(scrollPane_4);
+        
+        textArea_4 = new JTextArea();
+        scrollPane_4.setViewportView(textArea_4);
+    }
+    
+    public static class Ctp implements Runnable{
+        
+        private GuotaianGUI guotaian;
+        
+        public Ctp(GuotaianGUI guotaian){
+            this.guotaian = guotaian;
+        }
+
+        @Override
+        public void run() {
+            JCTPMdApi mdApi = JCTPMdApi.createFtdcTraderApi();
+            
+            JCTPMdSpi mdSpi = new MyMdSpi(mdApi,guotaian);
+            //注册spi
+            mdApi.registerSpi(mdSpi);
+            //注册前置机地址
+            mdApi.registerFront("tcp://180.168.146.187:10010");
+            mdApi.Init();
+            
+            mdApi.Join();
+            
+//          TimeUnit.SECONDS.sleep(5);
+            mdApi.Release();
+            
+            
+        }
+        
     }
     
     public static class MarketThread implements Runnable{
