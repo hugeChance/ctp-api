@@ -65,8 +65,6 @@ public class HugeChanceLogin {
         combo.add("tcp://180.168.146.187:10000",0);
         combo.add("tcp://180.168.146.187:10001",1);
         combo.add("tcp://218.202.237.33:10002",2);
-        combo.add("tcp://116.228.31.199:41205",3);
-        combo.add("tcp://180.169.116.119:41205",4);
         combo.setBounds(189, 45, 110, 23);
         
         /*Label investorNo = new Label(shlctp, SWT.NONE);
