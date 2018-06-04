@@ -35,8 +35,11 @@ import org.hraink.futures.jctp.trader.JCTPTraderSpi;
 
 import com.alibaba.fastjson.JSON;
 
+import com.caoxx.swt.mainControl;
+
 import hugeChance.ctp.swt.GuiTest;
-import hugeChance.ctp.swt.HugeChanceApp;
+
+import com.caoxx.swt.CaoxxApp;
 
 /**
  * Custom TraderSpi
@@ -50,7 +53,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	
 	JCTPTraderApi traderApi;
 	int nRequestID = 0;
-	GuiTest guiTest;
+	mainControl mainControl;
 	
 	//中证
 	/*String brokerId = "4080";
@@ -61,15 +64,15 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	
 	public MyTraderSpiTest(JCTPTraderApi traderApi,GuiTest guiTest) {
 		this.traderApi = traderApi;
-		this.guiTest = guiTest;
+		this.mainControl = mainControl;
 	}
 	public void onFrontConnected() {
 	    logger.debug("前置机连接");
 		CThostFtdcReqUserLoginField userLoginField = new CThostFtdcReqUserLoginField();
 		/*System.out.println(JSON.toJSONString(coreappView.getMainAccount()));*/
-		userLoginField.setBrokerID(guiTest.brokenId);
-		userLoginField.setUserID(guiTest.investorNo);
-		userLoginField.setPassword(guiTest.passwd);
+		userLoginField.setBrokerID(mainControl.brokenId);
+		userLoginField.setUserID(mainControl.investorNo);
+		userLoginField.setPassword(mainControl.passwd);
 		
 		traderApi.reqUserLogin(userLoginField, 1);
 
@@ -86,7 +89,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	    
 	    logger.debug("登录请求响应："+JSON.toJSONString(pRspUserLogin));
 	    
-	    //guiTest.onRspUserLogin(pRspUserLogin, pRspInfo, nRequestID, bIsLast);
+	    //mainControl.onRspUserLogin(pRspUserLogin, pRspInfo, nRequestID, bIsLast);
 	    
 //		System.out.println("TradingDay:" + traderApi.getTradingDay());
 //		System.out.println(pRspInfo.getErrorID());
@@ -107,8 +110,8 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 //		
 		//确认结算单
 		CThostFtdcSettlementInfoConfirmField confirmField = new CThostFtdcSettlementInfoConfirmField();
-		confirmField.setBrokerID(guiTest.brokenId);
-		confirmField.setInvestorID(guiTest.investorNo);
+		confirmField.setBrokerID(mainControl.brokenId);
+		confirmField.setInvestorID(mainControl.investorNo);
 		traderApi.reqSettlementInfoConfirm(confirmField, ++nRequestID);
 //
 //		
@@ -159,26 +162,26 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	@Override
 	public void onRtnOrder(CThostFtdcOrderField pOrder) {
 	    logger.debug("报单通知："+JSON.toJSONString(pOrder));
-	    guiTest.onRtnOrder(pOrder);
+	    mainControl.onRtnOrder(pOrder);
 	}
 	
 	@Override
 	public void onRspOrderInsert(CThostFtdcInputOrderField pInputOrder,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-	    guiTest.onRspOrderInsert(pInputOrder,pRspInfo,nRequestID,bIsLast);
+	    mainControl.onRspOrderInsert(pInputOrder,pRspInfo,nRequestID,bIsLast);
 	}
 	
 	@Override
 	public void onRspOrderAction(
 			CThostFtdcInputOrderActionField pInputOrderAction,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-	    guiTest.onRspOrderAction(pInputOrderAction,pRspInfo,nRequestID,bIsLast);
+	    mainControl.onRspOrderAction(pInputOrderAction,pRspInfo,nRequestID,bIsLast);
 		
 	}
 	
 	@Override
 	public void onRtnTrade(CThostFtdcTradeField pTrade) {
-	    guiTest.onRtnTrade(pTrade);
+	    mainControl.onRtnTrade(pTrade);
 	}
 	
 	@Override
@@ -188,7 +191,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 //		System.out.println(JSON.toJSONString(pInvestorPositionDetail));
 //		
 //		System.out.println("持仓明细查询回调");
-	    guiTest.onRspQryInvestorPositionDetail(pInvestorPositionDetail,pRspInfo,nRequestID,bIsLast);
+	    mainControl.onRspQryInvestorPositionDetail(pInvestorPositionDetail,pRspInfo,nRequestID,bIsLast);
 	}
 	
 	
@@ -197,7 +200,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 			CThostFtdcInvestorPositionField pInvestorPosition,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 //		System.out.println("持仓查询回调");
-	    guiTest.onRspQryInvestorPosition(pInvestorPosition, pRspInfo, nRequestID, bIsLast);
+	    mainControl.onRspQryInvestorPosition(pInvestorPosition, pRspInfo, nRequestID, bIsLast);
 	}
 
 	@Override
@@ -205,21 +208,21 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 			CThostFtdcSettlementInfoConfirmField pSettlementInfoConfirm,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 //		System.out.println("结算单确认回调");
-	    //guiTest.onRspSettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast);
+	    //mainControl.onRspSettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast);
 	}
 	
 	@Override
 	public void onRspError(CThostFtdcRspInfoField pRspInfo, int nRequestID,
 			boolean bIsLast) {
 //		System.out.println("错误回调");
-	    guiTest.onRspError(pRspInfo, nRequestID, bIsLast);
+	    mainControl.onRspError(pRspInfo, nRequestID, bIsLast);
 	}
 	
 	@Override
 	public void onErrRtnOrderInsert(CThostFtdcInputOrderField pInputOrder,
 			CThostFtdcRspInfoField pRspInfo) {
 //		System.out.println("报单录入错误回调");
-	    guiTest.onErrRtnOrderInsert(pInputOrder, pRspInfo);
+	    mainControl.onErrRtnOrderInsert(pInputOrder, pRspInfo);
 	}
 	
 	
@@ -232,7 +235,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	 */
 	@Override
 	public void onRspQryTradingAccount(CThostFtdcTradingAccountField pTradingAccount, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-	    guiTest.onRspQryTradingAccount(pTradingAccount, pRspInfo,nRequestID,bIsLast);
+	    mainControl.onRspQryTradingAccount(pTradingAccount, pRspInfo,nRequestID,bIsLast);
 		
 	}
 	
@@ -246,7 +249,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
 	@Override
     public void onRspUserLogout(CThostFtdcUserLogoutField pUserLogout, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
         logger.debug("登出请求响应："+JSON.toJSONString(pUserLogout));
-        guiTest.onRspUserLogout(pUserLogout, pRspInfo, nRequestID, bIsLast);
+        mainControl.onRspUserLogout(pUserLogout, pRspInfo, nRequestID, bIsLast);
     }
     
 	/**
@@ -260,7 +263,7 @@ public class MyTraderSpiTest extends JCTPTraderSpi {
     public void onRspQryInstrument(CThostFtdcInstrumentField pInstrument, CThostFtdcRspInfoField pRspInfo,
             int nRequestID, boolean bIsLast) {
         logger.info("查询合约返回："+JSON.toJSONString(pInstrument));
-        guiTest.onRspQryInstrument(pInstrument,pRspInfo,nRequestID,bIsLast);
+        mainControl.onRspQryInstrument(pInstrument,pRspInfo,nRequestID,bIsLast);
     }
 	
 	
