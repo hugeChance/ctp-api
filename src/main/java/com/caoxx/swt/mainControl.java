@@ -44,7 +44,6 @@ public class mainControl {
     JCTPTraderSpi traderSpi;
 	protected Shell shell;
 	private Text text;
-	private Text text_1;
 	private Text text_2;
 	private Text text_3;
 	
@@ -125,8 +124,8 @@ public class mainControl {
 		Composite composite_1 = new Composite(shell, SWT.NONE);
 		composite_1.setBounds(0, 47, 500, 207);
 		
-		text_1 = new Text(composite_1, SWT.BORDER);
-		text_1.setBounds(0, 22, 241, 185);
+		console = new Text(composite_1, SWT.BORDER);
+		console.setBounds(0, 22, 241, 185);
 		
 		Label lblCtp = new Label(composite_1, SWT.NONE);
 		lblCtp.setBounds(0, 0, 82, 17);
