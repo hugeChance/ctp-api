@@ -2,8 +2,11 @@ package com.caoxx.swt;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.layout.RowLayout;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,8 @@ import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcSettlementInfoCon
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcTradeField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcTradingAccountField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcUserLogoutField;
+import org.hraink.futures.jctp.md.JCTPMdApi;
+import org.hraink.futures.jctp.md.JCTPMdSpi;
 import org.hraink.futures.jctp.trader.JCTPTraderApi;
 import org.hraink.futures.jctp.trader.JCTPTraderSpi;
 
@@ -33,12 +38,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import com.caoxx.api.MyTraderSpiTest;
+import com.caoxx.api.MyMdSpi;
+
+
 
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+
+
 
 public class mainControl {
 
+	 static final String MARKET_IP = "tcp://180.168.146.187";
+	 static final int MARKET_PORT = 10001;
 	static Logger logger = Logger.getLogger(CaoxxApp.class);
 	JCTPTraderApi traderApi;
     JCTPTraderSpi traderSpi;
@@ -46,13 +59,17 @@ public class mainControl {
 	private Text text;
 	private Text text_2;
 	private Text text_3;
+	private Combo combo;
 	
-	private Text console;
+	private Table marketTable; 
+	
+	private Socket marketSocket;
 
 	public String url;
     public String brokenId;
     public String investorNo;
     public String passwd;
+    public Text console;
 	
 	 public mainControl(String url, String brokenId, String investorNo, String passwd){
 	        this.url = url;
@@ -69,10 +86,42 @@ public class mainControl {
 		try {
 			mainControl window = new mainControl("tcp://180.168.146.187:10000","9999","105839","caojiactp1");
 			window.open();
+			Thread ctp = new Thread(new Ctp(window));
+	        ctp.setDaemon(true);
+	        ctp.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+    public static class Ctp implements Runnable{
+        
+        private mainControl mainControl;
+        
+        public Ctp(mainControl mainControl){
+            this.mainControl = mainControl;
+        }
+
+        @Override
+        public void run() {
+            JCTPMdApi mdApi = JCTPMdApi.createFtdcTraderApi();
+            
+            JCTPMdSpi mdSpi = new MyMdSpi(mdApi,mainControl);
+            //注册spi
+            mdApi.registerSpi(mdSpi);
+            //注册前置机地址
+            mdApi.registerFront("tcp://180.168.146.187:10010");
+            mdApi.Init();
+            
+            mdApi.Join();
+            
+//          TimeUnit.SECONDS.sleep(5);
+            mdApi.Release();
+            
+            
+        }
+        
+    }
 
 	/**
 	 * Open the window.
@@ -81,6 +130,14 @@ public class mainControl {
 		Display display = Display.getDefault();
 		createContents();
 		shell.open();
+		
+		
+        
+        //行情接收线程
+
+        
+		
+		
 		shell.layout();
 		
 		
@@ -124,9 +181,6 @@ public class mainControl {
 		Composite composite_1 = new Composite(shell, SWT.NONE);
 		composite_1.setBounds(0, 47, 500, 207);
 		
-		console = new Text(composite_1, SWT.BORDER);
-		console.setBounds(0, 22, 241, 185);
-		
 		Label lblCtp = new Label(composite_1, SWT.NONE);
 		lblCtp.setBounds(0, 0, 82, 17);
 		lblCtp.setText("CTP行情接收：");
@@ -137,6 +191,9 @@ public class mainControl {
 		
 		text_2 = new Text(composite_1, SWT.BORDER);
 		text_2.setBounds(247, 22, 253, 185);
+		
+		console = new Text(composite_1, SWT.BORDER);
+		console.setBounds(0, 21, 243, 186);
 		
 		Composite composite_2 = new Composite(shell, SWT.NONE);
 		composite_2.setBounds(0, 260, 500, 143);
@@ -183,6 +240,19 @@ public class mainControl {
             traderApi.release();
         }
         
+    }
+	
+	public void initMarketSocket(){
+        //如果socket为空 或者断开连接则创建一个socket
+        if(marketSocket == null || !(marketSocket.isConnected() == true && marketSocket.isClosed() == false)){
+            try {
+                logger.info("=====================开始与行情服务器建立连接==============");
+                marketSocket = new Socket(MARKET_IP,MARKET_PORT);
+                marketSocket.setKeepAlive(false);
+            } catch (Exception e) {
+                logger.error("与行情服务器通信失败",e);
+            }
+        }
     }
 	
 	
@@ -637,5 +707,38 @@ public class mainControl {
                 console.append("查询合约返回"+JSON.toJSONString(pInstrument)+"\r\n");
             }
         });
+    }
+    
+    public Socket getSocket() {
+        return marketSocket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.marketSocket = socket;
+    }
+    
+    public void recreateSocket(){
+        
+        if(marketSocket != null){
+            try {
+                marketSocket.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        try {
+            this.marketSocket = new Socket(MARKET_IP,10001);
+        } catch (Exception e) {
+            logger.error("与行情服务器通信失败",e);
+        }
+    }
+    
+    public Combo getCombo() {
+        return combo;
+    }
+
+    public void setCombo(Combo combo) {
+        this.combo = combo;
     }
 }
