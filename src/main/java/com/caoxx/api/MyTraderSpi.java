@@ -1,15 +1,6 @@
 package com.caoxx.api;
 
 
-import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_FTDC_CC_Immediately;
-import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_FTDC_D_Buy;
-import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_FTDC_FCC_NotForceClose;
-import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_FTDC_OPT_LimitPrice;
-import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_FTDC_TC_GFD;
-import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDataTypeLibrary.THOST_FTDC_VC_AV;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
@@ -20,9 +11,6 @@ import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInstrumentField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInvestorPositionDetailField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInvestorPositionField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcOrderField;
-import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcQryInstrumentField;
-import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcQryInvestorPositionDetailField;
-import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcQryInvestorPositionField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcReqUserLoginField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcRspInfoField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcRspUserLoginField;
@@ -34,8 +22,8 @@ import org.hraink.futures.jctp.trader.JCTPTraderApi;
 import org.hraink.futures.jctp.trader.JCTPTraderSpi;
 
 import com.alibaba.fastjson.JSON;
-
 import com.caoxx.swt.CaoxxApp;
+import com.caoxx.swt.mainControl;
 
 
 /**
@@ -50,7 +38,8 @@ public class MyTraderSpi extends JCTPTraderSpi {
 	
 	JCTPTraderApi traderApi;
 	int nRequestID = 0;
-	CaoxxApp CaoxxApp;
+
+	mainControl mainControl;
 	
 	//中证
 	String brokerId = "4080";
@@ -59,9 +48,9 @@ public class MyTraderSpi extends JCTPTraderSpi {
 	List<Socket> socketList;
 	
 	
-	public MyTraderSpi(JCTPTraderApi traderApi,CaoxxApp CaoxxApp) {
+	public MyTraderSpi(JCTPTraderApi traderApi,mainControl mainControl) {
 		this.traderApi = traderApi;
-		this.CaoxxApp = CaoxxApp;
+		this.mainControl = mainControl;
 	}
 	public void onFrontConnected() {
 	    logger.debug("前置机连接");
@@ -77,8 +66,8 @@ public class MyTraderSpi extends JCTPTraderSpi {
 
 		CThostFtdcReqUserLoginField pReqUserLoginField = new CThostFtdcReqUserLoginField();
         pReqUserLoginField.setBrokerID("9999");
-        pReqUserLoginField.setUserID("090985");
-        pReqUserLoginField.setPassword("caojiactp");
+        pReqUserLoginField.setUserID("119835");
+        pReqUserLoginField.setPassword("cao830107");
         //traderApi.reqUserLogin(pReqUserLoginField, 0);
 		
 //		CThostFtdcInputOrderField pInputOrder = new CThostFtdcInputOrderField();
@@ -93,7 +82,10 @@ public class MyTraderSpi extends JCTPTraderSpi {
 	    
 	    logger.debug("登录请求响应："+JSON.toJSONString(pRspUserLogin));
 	    
-	    CaoxxApp.onRspUserLogin(pRspUserLogin, pRspInfo, nRequestID, bIsLast);
+	    
+	    
+	    mainControl.sessionID = pRspUserLogin.getSessionID();
+	    mainControl.frontID = pRspUserLogin.getFrontID();
 	    
 //		System.out.println("TradingDay:" + traderApi.getTradingDay());
 //		System.out.println(pRspInfo.getErrorID());
@@ -164,26 +156,26 @@ public class MyTraderSpi extends JCTPTraderSpi {
 	@Override
 	public void onRtnOrder(CThostFtdcOrderField pOrder) {
 	    logger.debug("报单通知："+JSON.toJSONString(pOrder));
-	    CaoxxApp.onRtnOrder(pOrder);
+	    mainControl.onRtnOrder(pOrder);
 	}
 	
 	@Override
 	public void onRspOrderInsert(CThostFtdcInputOrderField pInputOrder,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-	    CaoxxApp.onRspOrderInsert(pInputOrder,pRspInfo,nRequestID,bIsLast);
+		mainControl.onRspOrderInsert(pInputOrder,pRspInfo,nRequestID,bIsLast);
 	}
 	
 	@Override
 	public void onRspOrderAction(
 			CThostFtdcInputOrderActionField pInputOrderAction,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-	    CaoxxApp.onRspOrderAction(pInputOrderAction,pRspInfo,nRequestID,bIsLast);
+		mainControl.onRspOrderAction(pInputOrderAction,pRspInfo,nRequestID,bIsLast);
 		
 	}
 	
 	@Override
 	public void onRtnTrade(CThostFtdcTradeField pTrade) {
-	    CaoxxApp.onRtnTrade(pTrade);
+		mainControl.onRtnTrade(pTrade);
 	}
 	
 	@Override
@@ -193,7 +185,7 @@ public class MyTraderSpi extends JCTPTraderSpi {
 //		System.out.println(JSON.toJSONString(pInvestorPositionDetail));
 //		
 //		System.out.println("持仓明细查询回调");
-	    CaoxxApp.onRspQryInvestorPositionDetail(pInvestorPositionDetail,pRspInfo,nRequestID,bIsLast);
+		mainControl.onRspQryInvestorPositionDetail(pInvestorPositionDetail,pRspInfo,nRequestID,bIsLast);
 	}
 	
 	
@@ -202,7 +194,7 @@ public class MyTraderSpi extends JCTPTraderSpi {
 			CThostFtdcInvestorPositionField pInvestorPosition,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 //		System.out.println("持仓查询回调");
-	    CaoxxApp.onRspQryInvestorPosition(pInvestorPosition, pRspInfo, nRequestID, bIsLast);
+		mainControl.onRspQryInvestorPosition(pInvestorPosition, pRspInfo, nRequestID, bIsLast);
 	}
 
 	@Override
@@ -210,21 +202,21 @@ public class MyTraderSpi extends JCTPTraderSpi {
 			CThostFtdcSettlementInfoConfirmField pSettlementInfoConfirm,
 			CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 //		System.out.println("结算单确认回调");
-	    CaoxxApp.onRspSettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast);
+		mainControl.onRspSettlementInfoConfirm(pSettlementInfoConfirm, pRspInfo, nRequestID, bIsLast);
 	}
 	
 	@Override
 	public void onRspError(CThostFtdcRspInfoField pRspInfo, int nRequestID,
 			boolean bIsLast) {
 //		System.out.println("错误回调");
-	    CaoxxApp.onRspError(pRspInfo, nRequestID, bIsLast);
+		mainControl.onRspError(pRspInfo, nRequestID, bIsLast);
 	}
 	
 	@Override
 	public void onErrRtnOrderInsert(CThostFtdcInputOrderField pInputOrder,
 			CThostFtdcRspInfoField pRspInfo) {
 //		System.out.println("报单录入错误回调");
-	    CaoxxApp.onErrRtnOrderInsert(pInputOrder, pRspInfo);
+		mainControl.onErrRtnOrderInsert(pInputOrder, pRspInfo);
 	}
 	
 	
@@ -237,7 +229,7 @@ public class MyTraderSpi extends JCTPTraderSpi {
 	 */
 	@Override
 	public void onRspQryTradingAccount(CThostFtdcTradingAccountField pTradingAccount, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-	    CaoxxApp.onRspQryTradingAccount(pTradingAccount, pRspInfo,nRequestID,bIsLast);
+		mainControl.onRspQryTradingAccount(pTradingAccount, pRspInfo,nRequestID,bIsLast);
 		
 	}
 	
@@ -251,7 +243,7 @@ public class MyTraderSpi extends JCTPTraderSpi {
 	@Override
     public void onRspUserLogout(CThostFtdcUserLogoutField pUserLogout, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
         logger.debug("登出请求响应："+JSON.toJSONString(pUserLogout));
-        CaoxxApp.onRspUserLogout(pUserLogout, pRspInfo, nRequestID, bIsLast);
+        mainControl.onRspUserLogout(pUserLogout, pRspInfo, nRequestID, bIsLast);
     }
     
 	/**
@@ -265,7 +257,7 @@ public class MyTraderSpi extends JCTPTraderSpi {
     public void onRspQryInstrument(CThostFtdcInstrumentField pInstrument, CThostFtdcRspInfoField pRspInfo,
             int nRequestID, boolean bIsLast) {
         logger.info("查询合约返回："+JSON.toJSONString(pInstrument));
-        CaoxxApp.onRspQryInstrument(pInstrument,pRspInfo,nRequestID,bIsLast);
+        mainControl.onRspQryInstrument(pInstrument,pRspInfo,nRequestID,bIsLast);
     }
 	
 	

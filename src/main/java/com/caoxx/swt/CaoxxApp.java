@@ -176,7 +176,7 @@ public class CaoxxApp {
             traderApi = JCTPTraderApi.createFtdcTraderApi();
             traderApi = JCTPTraderApi.createFtdcTraderApi(dataPath);
 
-            traderSpi = new MyTraderSpi(traderApi,CaoxxApp.this);
+//            traderSpi = new MyTraderSpi(traderApi,CaoxxApp.this);
             
             //注册traderpi
             traderApi.registerSpi(traderSpi);
