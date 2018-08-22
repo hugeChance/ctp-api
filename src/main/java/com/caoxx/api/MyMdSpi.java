@@ -94,7 +94,8 @@ public class MyMdSpi extends JCTPMdSpi {
 		//logger.debug("读取文件合约信息："+JSON.toJSONString(ss));
 		
 		
-		subResult = mdApi.subscribeMarketData("cu1809","zn1809","ru1809","ni1809");
+//		subResult = mdApi.subscribeMarketData("cu1809","zn1809","ru1809","ni1809");
+		subResult = mdApi.subscribeMarketData("zn1809");
 		System.out.println(subResult == 0 ? "订阅成功" : "订阅失败");
 	}
 	
@@ -121,6 +122,23 @@ public class MyMdSpi extends JCTPMdSpi {
 		
 		
 		
+		
+		return retval;
+	}
+	public double getHYMinValue(String instrumentStr){
+		double retval = 0;
+		if(checkInstruMinValue1(instrumentStr)) {
+    		return 1;
+		}
+		if(checkInstruMinValue2(instrumentStr)) {
+    		return 2;
+		}
+		if(checkInstruMinValue5(instrumentStr)) {
+    		return 5;
+		}
+		if(checkInstruMinValue10(instrumentStr)) {
+    		return 10;
+		}
 		
 		return retval;
 	}
@@ -283,6 +301,8 @@ public class MyMdSpi extends JCTPMdSpi {
                         			if(null == instrument.getStatus() || instrument.getStatus().equals(""))
                         			{
                         				if(pDepthfutureMarket.getLastPrice() > Double.valueOf(instrument.getMa20To1Value())){
+                        					//开仓加一跳
+                        					f1 = f1 + getHYMinValue(instrumentStr);
         	                    			//买开挂单
         	                    			orderinsert(instrumentStr,"0",f1,'0');
         	                    			
@@ -293,6 +313,8 @@ public class MyMdSpi extends JCTPMdSpi {
         	                    			
         	                    		} else if(pDepthfutureMarket.getLastPrice() < Double.valueOf(instrument.getMa20To1Value())){
         	                    			//卖开挂单
+        	                    			//开仓减一跳
+        	                    			f1 = f1 - getHYMinValue(instrumentStr);
         	                    			orderinsert(instrumentStr,"0",f1,'1');
         	                    			instrument.setUpdateFlg(0);
         	                    			instrument.setStatus("1");
@@ -324,6 +346,8 @@ public class MyMdSpi extends JCTPMdSpi {
     	                    		
     	                    	        if(pDepthfutureMarket.getLastPrice() > Double.valueOf(instrument.getMa20To1Value())){
     		                    			//买开挂单
+    	                    	        	//开仓加一跳
+                        					f1 = f1 + getHYMinValue(instrumentStr);
     		                    			orderinsert(instrumentStr,"0",f1,'0');
     		                    			
     		                    			instrument.setUpdateFlg(0);
@@ -333,6 +357,8 @@ public class MyMdSpi extends JCTPMdSpi {
     		                    			
     		                    		} else if(pDepthfutureMarket.getLastPrice() < Double.valueOf(instrument.getMa20To1Value())){
     		                    			//卖开挂单
+    		                    			//开仓减一跳
+        	                    			f1 = f1 - getHYMinValue(instrumentStr);
     		                    			orderinsert(instrumentStr,"0",f1,'1');
     		                    			instrument.setUpdateFlg(0);
     		                    			instrument.setStatus("1");
