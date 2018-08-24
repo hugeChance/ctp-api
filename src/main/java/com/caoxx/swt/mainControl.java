@@ -108,7 +108,7 @@ public class mainControl {
     public String investorNo;
     public String passwd;
     public Text console;
-    public double nProfit = 5;
+    public double nProfit = 6;
     
     public double adverseValue = 0.3;
     

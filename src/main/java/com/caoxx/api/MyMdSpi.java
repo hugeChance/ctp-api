@@ -383,7 +383,9 @@ public class MyMdSpi extends JCTPMdSpi {
                         							//设置最大有利值
                         							instrument.setMaxProfitValue(pDepthfutureMarket.getLastPrice());
                         							//设置最大回调值 默认为30%
-                        							double tempa = instrument.getMaxProfitValue() - (pDepthfutureMarket.getLastPrice() - Double.valueOf(instrument.getTradeValue())) * mainControl.adverseValue * getRatio;
+//                        							double tempa = instrument.getMaxProfitValue() - (pDepthfutureMarket.getLastPrice() - Double.valueOf(instrument.getTradeValue())) * mainControl.adverseValue * getRatio;
+                        							//设置最大回调值 为回调3跳
+                        							double tempa = instrument.getMaxProfitValue() - 3 * getHYMinValue(instrumentStr);
                         							instrument.setAdverseValue(tempa);
                         							mainControl.m20To1Map.put(instrumentStr, instrument);
                         						}
@@ -421,7 +423,9 @@ public class MyMdSpi extends JCTPMdSpi {
                         							//设置最大有利值
                         							instrument.setMaxProfitValue(pDepthfutureMarket.getLastPrice());
                         							//设置最大回调值 默认为30%
-                        							double tempa = instrument.getMaxProfitValue() + (pDepthfutureMarket.getLastPrice() - Double.valueOf(instrument.getTradeValue())) * mainControl.adverseValue * getRatio;
+//                        							double tempa = instrument.getMaxProfitValue() + (pDepthfutureMarket.getLastPrice() - Double.valueOf(instrument.getTradeValue())) * mainControl.adverseValue * getRatio;
+                        							//设置最大回调值 为回调3跳
+                        							double tempa = instrument.getMaxProfitValue() + 3 * getHYMinValue(instrumentStr);
                         							instrument.setAdverseValue(tempa);
                         							mainControl.m20To1Map.put(instrumentStr, instrument);
                         						}
