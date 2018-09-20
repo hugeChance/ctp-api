@@ -158,6 +158,8 @@ public class mainControl {
 	public static ArrayList<String> HYnameMinValue5 = new ArrayList<String>();
 	
 	public static ArrayList<String> HYnameMinValue10 = new ArrayList<String>();
+	
+	public static ArrayList<String> HYnameMinValue005 = new ArrayList<String>();
 
 	public String newm1809;
     
@@ -290,6 +292,8 @@ public class mainControl {
 			HYnameMinValue2.add("p");
 			HYnameMinValue2.add("ta");
 			HYnameMinValue2.add("ro");
+			
+			HYnameMinValue005.add("au");
 			
 			
 			

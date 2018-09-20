@@ -95,7 +95,7 @@ public class MyMdSpi extends JCTPMdSpi {
 		
 		
 //		subResult = mdApi.subscribeMarketData("cu1809","zn1809","ru1809","ni1809");
-		subResult = mdApi.subscribeMarketData("zn1809");
+		subResult = mdApi.subscribeMarketData("al1811","au1812");
 		System.out.println(subResult == 0 ? "订阅成功" : "订阅失败");
 	}
 	
@@ -120,6 +120,11 @@ public class MyMdSpi extends JCTPMdSpi {
     		return 10;
 		}
 		
+		if(checkInstruMinValue005(instrumentStr)) {
+			
+    		return 0.05;
+		}
+		
 		
 		
 		
@@ -138,6 +143,10 @@ public class MyMdSpi extends JCTPMdSpi {
 		}
 		if(checkInstruMinValue10(instrumentStr)) {
     		return 10;
+		}
+		if(checkInstruMinValue005(instrumentStr)) {
+			
+    		return 0.05;
 		}
 		
 		return retval;
@@ -173,6 +182,14 @@ public class MyMdSpi extends JCTPMdSpi {
 			BigDecimal b = new BigDecimal(value);
     		double f1 = b.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
     		retval = f1 * 10 ;
+    		return retval;
+		}
+		
+		if(checkInstruMinValue005(instrumentStr)) {
+			value = value * 100 / 5;
+			BigDecimal b = new BigDecimal(value);
+    		double f1 = b.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+    		retval = f1 / 100 * 5;
     		return retval;
 		}
 		
@@ -257,6 +274,27 @@ public class MyMdSpi extends JCTPMdSpi {
 		}
 		if(instr.length() == 5){			
 			for (String hyName : mainControl.HYnameMinValue10) {
+				if(instr.substring(0, 1).equals(hyName)){
+					return true;
+				}
+			}
+			
+		}
+		return retFlg;
+	}
+	
+	public boolean checkInstruMinValue005(String instr){
+		boolean retFlg = false;
+		if(instr.length() == 6){			
+			for (String hyName : mainControl.HYnameMinValue005) {
+				if(instr.substring(0, 2).equals(hyName)){
+					return true;
+				}
+			}
+			
+		}
+		if(instr.length() == 5){			
+			for (String hyName : mainControl.HYnameMinValue005) {
 				if(instr.substring(0, 1).equals(hyName)){
 					return true;
 				}
