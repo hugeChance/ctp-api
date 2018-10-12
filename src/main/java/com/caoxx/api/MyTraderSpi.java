@@ -66,8 +66,10 @@ public class MyTraderSpi extends JCTPTraderSpi {
 
 		CThostFtdcReqUserLoginField pReqUserLoginField = new CThostFtdcReqUserLoginField();
         pReqUserLoginField.setBrokerID("9999");
-        pReqUserLoginField.setUserID("119835");
-        pReqUserLoginField.setPassword("cao830107");
+//        pReqUserLoginField.setUserID("119835");
+//        pReqUserLoginField.setPassword("cao830107");
+        pReqUserLoginField.setUserID("097158");
+        pReqUserLoginField.setPassword("123456");
         //traderApi.reqUserLogin(pReqUserLoginField, 0);
 		
 //		CThostFtdcInputOrderField pInputOrder = new CThostFtdcInputOrderField();

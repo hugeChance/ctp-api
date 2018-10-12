@@ -308,7 +308,8 @@ public class mainControl {
 			
 			
 						
-			mainControl window = new mainControl("tcp://180.168.146.187:10000","9999","119835","cao830107");
+//			mainControl window = new mainControl("tcp://180.168.146.187:10000","9999","119835","cao830107");
+			mainControl window = new mainControl("tcp://180.168.146.187:10000","9999","097158","123456");
 			Thread ctp = new Thread(new Ctp(window));
 	        ctp.setDaemon(true);
 	        ctp.start();
