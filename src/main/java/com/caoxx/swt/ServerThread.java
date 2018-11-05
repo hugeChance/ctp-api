@@ -11,7 +11,9 @@ public class ServerThread implements Runnable {
 	static Logger logger = Logger.getLogger(ServerThread.class);
 	
     private static final String ip = "localhost";
-    private static final int port = 3366;
+//    private static final int port = 3366; 是caoxx
+    //3377 是caoxx2
+    private static final int port = 3377;
 
 	
 	private mainControl mainControl;
