@@ -95,7 +95,7 @@ public class MyMdSpi extends JCTPMdSpi {
 		
 		
 //		subResult = mdApi.subscribeMarketData("cu1809","zn1809","ru1809","ni1809");
-		subResult = mdApi.subscribeMarketData("al1811");
+		subResult = mdApi.subscribeMarketData("al1812");
 		System.out.println(subResult == 0 ? "订阅成功" : "订阅失败");
 	}
 	
