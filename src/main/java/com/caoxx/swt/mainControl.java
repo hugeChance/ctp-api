@@ -279,6 +279,7 @@ public class mainControl {
 			HYnameMinValue1.add("sr");
 			HYnameMinValue1.add("er");
 			
+			
 			HYnameMinValue10.add("cu");
 			HYnameMinValue10.add("ni");
 			
@@ -287,6 +288,8 @@ public class mainControl {
 			HYnameMinValue5.add("ru");
 			HYnameMinValue5.add("v");
 			HYnameMinValue5.add("cf");
+			HYnameMinValue5.add("l");
+			
 			
 			HYnameMinValue2.add("y");
 			HYnameMinValue2.add("p");

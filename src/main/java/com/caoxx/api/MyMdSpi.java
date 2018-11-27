@@ -95,7 +95,7 @@ public class MyMdSpi extends JCTPMdSpi {
 		
 		
 //		subResult = mdApi.subscribeMarketData("cu1809","zn1809","ru1809","ni1809");
-		subResult = mdApi.subscribeMarketData("al1812");
+		subResult = mdApi.subscribeMarketData("l1905");
 		System.out.println(subResult == 0 ? "订阅成功" : "订阅失败");
 	}
 	
@@ -685,7 +685,7 @@ public class MyMdSpi extends JCTPMdSpi {
 		
 		//9:00 - 10:15 10:30 - 11:30 13:30-15:00  HYname000
 		if(checkInstru000(instr)){
-			String tempTime = instr.substring(0,time.length()-2).replace(":", "");
+			String tempTime = time.substring(0,time.length()-2).replace(":", "");
 			int intTime = Integer.valueOf(tempTime);
 			if((intTime >= 900 && intTime <= 1015) || (intTime >=1030 && intTime <=1130) || (intTime >=1330 && intTime <=1500) ){
 				return true;

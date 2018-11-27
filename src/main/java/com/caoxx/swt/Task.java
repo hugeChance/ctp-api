@@ -64,7 +64,7 @@ public class Task implements Runnable {
 				if(temp != null) {
 					mainControl.getOracleRet().append(temp+"\r\n");
 					 String[] splitStr = temp.split("\\|");
-					 if(splitStr[0].equals("MA10TO5M:")) {
+					 if(splitStr[0].equals("MA30TO5M:")) {
 						 Instrument instrument = mainControl.m20To1Map.get(splitStr[2]);
 						 if(null != instrument){
 							 instrument.setInstrumentId(splitStr[2]);
