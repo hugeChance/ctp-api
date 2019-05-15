@@ -8,6 +8,7 @@ import static org.hraink.futures.ctp.thostftdcuserapidatatype.ThostFtdcUserApiDa
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,11 +22,15 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -169,8 +174,18 @@ public class mainControl {
     private Text ctpConsole;
     private Table table;
     private Text orderRetText;
+    
+    
 	
-	 public Text getOrderRetText() {
+	 public Table getTable() {
+        return table;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
+    }
+
+    public Text getOrderRetText() {
 		return orderRetText;
 	}
 
@@ -449,13 +464,20 @@ public class mainControl {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if(e.button == 3) {
-					int colnum =0;
-					//得到一行
-					TableItem item = table.getItem(new Point(e.x, e.y)); 
-					//得到一个单元格
-					item.getText(colnum);
-				}
+			    TableItem selected = table.getItem(new Point(e.x, e.y)); 
+			    if(e.button == 3){//鼠标右键
+                    Menu menu = new Menu(table);
+                    table.setMenu(menu);
+                    
+                    if(selected != null ){
+                        
+                        CThostFtdcTradeField pTrade = (CThostFtdcTradeField) selected.getData();
+                        MenuItem item1 = new MenuItem(menu, SWT.None);
+                        item1.setText("平仓");
+                        item1.addSelectionListener(new CloseOrderSelection(pTrade));
+                    }
+                    
+                }
 			}
 		});
 		table.setBounds(0, 0, 500, 128);
@@ -468,19 +490,19 @@ public class mainControl {
 		
 		TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
 		tblclmnNewColumn_1.setWidth(100);
-		tblclmnNewColumn_1.setText("指标名");
+		tblclmnNewColumn_1.setText("成交价格");
 		
 		TableColumn tableColumn = new TableColumn(table, SWT.NONE);
 		tableColumn.setWidth(100);
-		tableColumn.setText("最新值");
+		tableColumn.setText("买卖方向");
 		
 		TableColumn tableColumn_1 = new TableColumn(table, SWT.NONE);
 		tableColumn_1.setWidth(100);
-		tableColumn_1.setText("最新时间");
+		tableColumn_1.setText("手数");
 		
 		TableColumn tableColumn_2 = new TableColumn(table, SWT.NONE);
 		tableColumn_2.setWidth(100);
-		tableColumn_2.setText("开关");
+		tableColumn_2.setText("成交时间");
 		
 		orderRetText = new Text(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		orderRetText.setBounds(506, 32, 219, 448);
@@ -490,6 +512,33 @@ public class mainControl {
 		label_1.setText("下单回报：");
 
 	}
+	
+    /**
+     * 平仓事件
+     * @author BHQH-CXYWB
+     */
+    public class CloseOrderSelection extends SelectionAdapter{
+        
+        private CThostFtdcTradeField pTrade;
+        
+        public CloseOrderSelection(CThostFtdcTradeField pTrade) {
+            this.pTrade = pTrade;
+        }
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            
+            String instrumentId = pTrade.getInstrumentID();
+            //平仓
+            CThostFtdcDepthMarketDataField pDepthfutureMarket = MyMdSpi.INSTRUMENT_MAP.get(instrumentId);
+            if(pTrade.getDirection() == '0'){
+                //买开->卖平
+                subOrder(instrumentId, '1', "3", pDepthfutureMarket.getLowerLimitPrice());
+            }else {
+                //卖开->买平
+                subOrder(instrumentId, '0', "3", pDepthfutureMarket.getUpperLimitPrice());
+            }
+        }
+    }
 	
 	
 	public class ConnectCTP implements Runnable{
@@ -824,6 +873,20 @@ public class mainControl {
             @Override
             public void run() {
             	getOrderRetText().append("成交|" + pTrade.getInstrumentID() + "|" + String.valueOf(pTrade.getPrice()) +"|"+pTrade.getTradingDay() +"\r\n");
+            	
+            	if(pTrade.getOffsetFlag() == '1'){
+            	    //平仓，清除table
+            	    table.removeAll();
+            	}else {
+            	    //开仓
+            	    TableItem tableItem= new TableItem(table, SWT.NONE);
+            	    tableItem.setData(pTrade);
+                    tableItem.setText(0, pTrade.getInstrumentID());
+                    tableItem.setText(1, new BigDecimal(pTrade.getPrice()).setScale(2, RoundingMode.HALF_UP).toString());
+                    tableItem.setText(2, pTrade.getDirection()=='0'?"买":"卖");//方向
+                    tableItem.setText(3, pTrade.getVolume()+"");//手数
+                    tableItem.setText(4, pTrade.getTradeTime());//成交时间
+                }
             }
         });
 		

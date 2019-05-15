@@ -12,10 +12,13 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TableItem;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcDepthMarketDataField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInputOrderActionField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcInputOrderField;
@@ -23,6 +26,7 @@ import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcReqUserLoginField
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcRspInfoField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcRspUserLoginField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcSpecificInstrumentField;
+import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcTradeField;
 import org.hraink.futures.ctp.thostftdcuserapistruct.CThostFtdcUserLogoutField;
 import org.hraink.futures.jctp.md.JCTPMdApi;
 import org.hraink.futures.jctp.md.JCTPMdSpi;
@@ -41,7 +45,7 @@ public class MyMdSpi extends JCTPMdSpi {
 	private JCTPMdApi mdApi;
 	
 	
-	
+	public static Map<String , CThostFtdcDepthMarketDataField> INSTRUMENT_MAP = new HashMap<>(); 
 
 	
 	private mainControl mainControl;
@@ -306,6 +310,8 @@ public class MyMdSpi extends JCTPMdSpi {
 
 	@Override
 	public void onRtnDepthMarketData(CThostFtdcDepthMarketDataField pDepthfutureMarket) {
+	    INSTRUMENT_MAP.put(pDepthfutureMarket.getInstrumentID(), pDepthfutureMarket);
+	    
 		if(mainControl != null){
 		    
 		    String time = StringUtils.rightPad(pDepthfutureMarket.getUpdateTime()+"."+pDepthfutureMarket.getUpdateMillisec(), 12,'0');
@@ -511,6 +517,15 @@ public class MyMdSpi extends JCTPMdSpi {
                     	
         		    }
                 	
+        		    /*TableItem[] items = mainControl.getTable().getItems();
+        	        if(items!= null){
+        	            for (TableItem tableItem : items) {
+        	                CThostFtdcTradeField pTrade = (CThostFtdcTradeField) tableItem.getData();
+        	                if(pTrade.getDirection() == '0'){
+        	                    //买开   浮动盈亏
+        	                }
+                        }
+        	        }*/
                 }
             });
 		    
